@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Task } from '../types/task'
 
 interface TaskFormProps {
-  onAdd: (task: Task) => void
+  onAdd: (task: Task) => void | Promise<void>
 }
 
 function TaskForm({ onAdd }: TaskFormProps) {

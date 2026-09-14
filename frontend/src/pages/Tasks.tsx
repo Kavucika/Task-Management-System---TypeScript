@@ -1,40 +1,98 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import TaskForm from '../components/TaskForm'
 import TaskList from '../components/TaskList'
+import {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+} from '../services/taskApi'
 import type { Task } from '../types/task'
 
 function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
 
-  function handleAddTask(task: Task) {
-    setTasks([...tasks, task])
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        const data = await getTasks()
+        setTasks(data)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTasks()
+  }, [])
+
+  async function handleAddTask(task: Task) {
+    try {
+      const newTask = await createTask(task.title)
+
+      setTasks((currentTasks) => [
+        newTask,
+        ...currentTasks,
+      ])
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  function handleToggleTask(id: number) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
+  async function handleToggleTask(id: number) {
+    const task = tasks.find((task) => task.id === id)
+
+    if (!task) {
+      return
+    }
+
+    try {
+      const updatedTask = await updateTask(id, {
+        completed: !task.completed,
+      })
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === id ? updatedTask : task
+        )
       )
-    )
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  function handleDeleteTask(id: number) {
-    setTasks(
-      tasks.filter((task) => task.id !== id)
-    )
-  }
+  async function handleDeleteTask(id: number) {
+    try {
+      await deleteTask(id)
 
-  function handleEditTask(id: number, title: string) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? { ...task, title }
-          : task
+      setTasks((currentTasks) =>
+        currentTasks.filter((task) => task.id !== id)
       )
-    )
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function handleEditTask(
+    id: number,
+    title: string
+  ) {
+    try {
+      const updatedTask = await updateTask(id, {
+        title,
+      })
+
+      setTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === id ? updatedTask : task
+        )
+      )
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -42,14 +100,22 @@ function Tasks() {
       <div className="mx-auto max-w-3xl">
         <Header />
 
-        <TaskForm onAdd={handleAddTask} />
+        {loading ? (
+          <p className="text-gray-500">
+            Loading tasks...
+          </p>
+        ) : (
+          <>
+            <TaskForm onAdd={handleAddTask} />
 
-        <TaskList
-          tasks={tasks}
-          onToggle={handleToggleTask}
-          onDelete={handleDeleteTask}
-          onEdit={handleEditTask}
-        />
+            <TaskList
+              tasks={tasks}
+              onToggle={handleToggleTask}
+              onDelete={handleDeleteTask}
+              onEdit={handleEditTask}
+            />
+          </>
+        )}
       </div>
     </main>
   )
