@@ -11,12 +11,6 @@ function Tasks() {
     setTasks([...tasks, task])
   }
 
-  function handleDeleteTask(id: number) {
-    setTasks(
-      tasks.filter((task) => task.id !== id)
-    )
-  }
-
   function handleToggleTask(id: number) {
     setTasks(
       tasks.map((task) =>
@@ -27,18 +21,37 @@ function Tasks() {
     )
   }
 
+  function handleDeleteTask(id: number) {
+    setTasks(
+      tasks.filter((task) => task.id !== id)
+    )
+  }
+
+  function handleEditTask(id: number, title: string) {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? { ...task, title }
+          : task
+      )
+    )
+  }
+
   return (
-    <div>
-      <Header />
+    <main className="min-h-screen bg-gray-50 px-4 py-10">
+      <div className="mx-auto max-w-3xl">
+        <Header />
 
-      <TaskForm onAdd={handleAddTask} />
+        <TaskForm onAdd={handleAddTask} />
 
-      <TaskList
-        tasks={tasks}
-        onToggle={handleToggleTask}
-        onDelete={handleDeleteTask}
-      />
-    </div>
+        <TaskList
+          tasks={tasks}
+          onToggle={handleToggleTask}
+          onDelete={handleDeleteTask}
+          onEdit={handleEditTask}
+        />
+      </div>
+    </main>
   )
 }
 

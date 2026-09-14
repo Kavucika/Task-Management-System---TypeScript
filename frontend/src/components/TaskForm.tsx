@@ -26,15 +26,24 @@ function TaskForm({ onAdd }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 flex gap-3"
+    >
       <input
         type="text"
         placeholder="Enter a task"
         value={task}
         onChange={(event) => setTask(event.target.value)}
+        className="flex-1 rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
       />
 
-      <button type="submit">Add Task</button>
+      <button
+        type="submit"
+        className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
+      >
+        Add Task
+      </button>
     </form>
   )
 }
