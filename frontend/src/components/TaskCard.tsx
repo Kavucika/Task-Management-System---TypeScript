@@ -3,10 +3,11 @@ import type { Task } from '../types/task'
 interface TaskCardProps {
   task: Task
   onToggle: (id: number) => void
+  onDelete: (id: number) => void
 }
 
-function TaskCard({ task, onToggle }: TaskCardProps) {
-  return (
+function TaskCard({ task, onToggle, onDelete }: TaskCardProps) {  return (
+    <>
     <li>
       <input
         type="checkbox"
@@ -18,7 +19,12 @@ function TaskCard({ task, onToggle }: TaskCardProps) {
         {task.title}
       </span>{' '}
       - {task.completed ? 'Completed' : 'Pending'}
+
+      <button type="button" onClick={() => onDelete(task.id)}>
+        Delete
+      </button>
     </li>
+    </>
   )
 }
 

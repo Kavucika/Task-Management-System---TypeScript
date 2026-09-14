@@ -11,6 +11,12 @@ function Tasks() {
     setTasks([...tasks, task])
   }
 
+  function handleDeleteTask(id: number) {
+    setTasks(
+      tasks.filter((task) => task.id !== id)
+    )
+  }
+
   function handleToggleTask(id: number) {
     setTasks(
       tasks.map((task) =>
@@ -30,6 +36,7 @@ function Tasks() {
       <TaskList
         tasks={tasks}
         onToggle={handleToggleTask}
+        onDelete={handleDeleteTask}
       />
     </div>
   )
